@@ -64,7 +64,6 @@ export class User extends CoreEntity {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException();
-      return false;
     }
   }
 }
