@@ -119,6 +119,11 @@ export class UsersService {
       if (email) {
         user.email = email;
         user.verified = false;
+        await this.verifications.delete({
+          user: {
+            id: user.id,
+          },
+        });
         const verification = await this.verifications.save(
           this.verifications.create({
             user,
@@ -147,18 +152,16 @@ export class UsersService {
         where: { code },
         relations: ['user'],
       });
-      if (verification) {
-        verification.user.verified = true;
-        await this.users.save(verification.user);
-        await this.verifications.delete(verification.id);
-        return {
-          ok: true,
-        };
-      }
+      verification.user.verified = true;
+      await this.users.save(verification.user);
+      await this.verifications.delete(verification.id);
+      return {
+        ok: true,
+      };
     } catch (error) {
       return {
         ok: false,
-        error,
+        error: 'Verification not found.',
       };
     }
   }
