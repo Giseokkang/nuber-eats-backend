@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginInput } from 'src/restaurants/dtos/login.dto';
+import { LoginInput } from 'src/users/dtos/login.dto';
 import { Repository } from 'typeorm';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { User } from './entities/user.entity';

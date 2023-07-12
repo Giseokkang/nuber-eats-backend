@@ -1,8 +1,8 @@
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { AuthGuard } from './../auth/auth.guard';
-import { LoginInput } from './../restaurants/dtos/login.dto';
+import { LoginInput } from './dtos/login.dto';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
-import { LoginOutput } from 'src/restaurants/dtos/login.dto';
+import { LoginOutput } from 'src/users/dtos/login.dto';
 import {
   CreateAccountInput,
   CreateAccountOutput,
