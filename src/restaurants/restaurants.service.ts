@@ -155,13 +155,13 @@ export class RestaurantService {
     });
   }
 
-  async findCategoryBySlug({ slug }: CategoryInput) {
+  async findCategoryBySlug({ slug, page }: CategoryInput) {
+    const PAGE_LIMIT = 25;
     try {
       const category = await this.categories.findOne({
         where: {
           slug,
         },
-        relations: ['restaurants'],
       });
       if (!category) {
         return {
@@ -169,9 +169,22 @@ export class RestaurantService {
           error: 'Category not found',
         };
       }
+      const restaurants = await this.restaurants.find({
+        where: {
+          category: {
+            slug,
+          },
+        },
+        take: PAGE_LIMIT,
+        skip: (1 - page) * PAGE_LIMIT,
+      });
+
+      category.restaurants = restaurants;
+      const totalPages = await this.countRestaurants(category);
       return {
         ok: true,
         category,
+        totalPages,
       };
     } catch (error) {
       return {
