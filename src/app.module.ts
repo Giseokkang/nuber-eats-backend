@@ -61,6 +61,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
       entities: [User, Verification, Restaurant, Category],
     }),
     JwtModule.forRoot({ privateKey: process.env.PRIVATE_KEY }),
+    AuthModule,
     UsersModule,
     RestaurantsModule,
     AuthModule,
