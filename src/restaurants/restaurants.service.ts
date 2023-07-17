@@ -18,7 +18,8 @@ import {
 } from './dtos/edit-restaurant.dto';
 import { CategoryRepository } from './repositories/category.repository';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
-import { CategoryInput } from './dtos/category.dto';
+import { CategoryInput, CategoryOutput } from './dtos/category.dto';
+import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -27,6 +28,27 @@ export class RestaurantService {
     private readonly restaurants: Repository<Restaurant>,
     private readonly categories: CategoryRepository,
   ) {}
+
+  async allRestaurants({ page }: RestaurantsInput): Promise<RestaurantsOutput> {
+    try {
+      const PAGE_LIMIT = 25;
+      const [restaurants, totalCounts] = await this.restaurants.findAndCount({
+        take: PAGE_LIMIT,
+        skip: (1 - page) * PAGE_LIMIT,
+      });
+      return {
+        ok: true,
+        results: restaurants,
+        totalCounts,
+        totalPages: Math.ceil(totalCounts / PAGE_LIMIT),
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not load restaurants',
+      };
+    }
+  }
 
   async createRestaurant(
     owner: User,
@@ -155,7 +177,10 @@ export class RestaurantService {
     });
   }
 
-  async findCategoryBySlug({ slug, page }: CategoryInput) {
+  async findCategoryBySlug({
+    slug,
+    page,
+  }: CategoryInput): Promise<CategoryOutput> {
     const PAGE_LIMIT = 25;
     try {
       const category = await this.categories.findOne({
@@ -179,12 +204,12 @@ export class RestaurantService {
         skip: (1 - page) * PAGE_LIMIT,
       });
 
-      category.restaurants = restaurants;
-      const totalPages = await this.countRestaurants(category);
+      const totalResults = await this.countRestaurants(category);
       return {
         ok: true,
         category,
-        totalPages,
+        restaurants,
+        totalPages: Math.ceil(totalResults / PAGE_LIMIT),
       };
     } catch (error) {
       return {

@@ -27,14 +27,17 @@ import {
 import { Category } from './entities/category.entity';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
+import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
 
 @Resolver((of) => Restaurant)
 export class RestaurantResolver {
   constructor(private readonly restaurantService: RestaurantService) {}
-  // @Query((returns) => [Restaurant])
-  // restaurants(): Promise<Restaurant[]> {
-  //   return this.restaurantService.getAll();
-  // }
+  @Query((returns) => RestaurantsOutput)
+  restaurants(
+    @Args('input') restaurantsInput: RestaurantsInput,
+  ): Promise<RestaurantsOutput> {
+    return this.restaurantService.allRestaurants(restaurantsInput);
+  }
 
   @Mutation((returns) => CreateRestaurantOutput)
   @Role(['Owner'])
