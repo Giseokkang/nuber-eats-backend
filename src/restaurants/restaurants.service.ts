@@ -119,7 +119,6 @@ export class RestaurantService {
       const category = await this.categories.getOrCreate(
         createRestaurantInput.categoryName,
       );
-      console.log('category', category);
       newRestaurant.category = category;
       await this.restaurants.save(newRestaurant);
       return {
@@ -164,6 +163,7 @@ export class RestaurantService {
           editRestaurantInput.categoryName,
         );
       }
+      
       await this.restaurants.save([
         {
           id: editRestaurantInput.restaurantId,
