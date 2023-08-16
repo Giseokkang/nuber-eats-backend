@@ -1,7 +1,7 @@
 import { MailService } from 'src/mail/mail.service';
 import { JwtService } from 'src/jwt/jwt.service';
 import { Verification } from './entities/verification.entity';
-import { User } from 'src/users/entities/user.entity';
+import { User, UserRole } from 'src/users/entities/user.entity';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
@@ -71,7 +71,7 @@ describe('UserService', () => {
     const createAccountArgs = {
       email: 'river.key93@gmail.com',
       password: 'asdfasdfasdf',
-      role: 0,
+      role: UserRole.Owner,
     };
     it('should fail if user exists', async () => {
       usersRepository.findOne.mockResolvedValue({
@@ -189,7 +189,7 @@ describe('UserService', () => {
       const mockUser = {
         id: 1,
         email: 'river.key93@gmail.com',
-        role: 0,
+        role: UserRole.Owner,
       };
       usersRepository.findOneOrFail.mockResolvedValue(mockUser);
       const result = await service.findById(MOCK_USER_ID);
@@ -219,7 +219,7 @@ describe('UserService', () => {
       id: 1,
       email: 'test@test.com',
       password: 'password',
-      role: 0,
+      role: UserRole.Owner,
       verified: true,
     };
     const mockVerification = {
