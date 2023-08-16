@@ -25,6 +25,7 @@ import {
   SearchRestaurantInput,
   SearchRestaurantOutput,
 } from './dtos/search-restaurant.dto';
+import { CreateDishInput, CreateDishOutput } from './dtos/create-dish.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -42,6 +43,7 @@ export class RestaurantService {
         where: {
           id: restaurantId,
         },
+        relations: ['menu'],
       });
       if (!restaurant) {
         return {
@@ -163,7 +165,7 @@ export class RestaurantService {
           editRestaurantInput.categoryName,
         );
       }
-      
+
       await this.restaurants.save([
         {
           id: editRestaurantInput.restaurantId,
@@ -276,5 +278,16 @@ export class RestaurantService {
         error: 'Could not load category',
       };
     }
+  }
+
+  async createDish(
+    owner: User,
+    createDishInput: CreateDishInput,
+  ): Promise<CreateDishOutput> {
+    try {
+    } catch (error) {}
+    return {
+      ok: true,
+    };
   }
 }
