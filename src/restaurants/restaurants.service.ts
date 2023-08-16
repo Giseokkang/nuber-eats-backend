@@ -4,7 +4,7 @@ import {
 } from './dtos/delete-restaurant.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Raw, Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import {
   CreateRestaurantInput,
   CreateRestaurantOutput,
@@ -26,12 +26,15 @@ import {
   SearchRestaurantOutput,
 } from './dtos/search-restaurant.dto';
 import { CreateDishInput, CreateDishOutput } from './dtos/create-dish.dto';
+import { Dish } from './entities/dish.entity';
 
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
+    @InjectRepository(Dish)
+    private readonly dishs: Repository<Dish>,
     private readonly categories: CategoryRepository,
   ) {}
 
@@ -285,9 +288,33 @@ export class RestaurantService {
     createDishInput: CreateDishInput,
   ): Promise<CreateDishOutput> {
     try {
-    } catch (error) {}
-    return {
-      ok: true,
-    };
+      const { error, restaurant } = await this.findRestaurantById({
+        restaurantId: createDishInput.restaurantId,
+      });
+      if (!restaurant) {
+        return {
+          ok: false,
+          error,
+        };
+      }
+      if (restaurant.ownerId !== owner.id) {
+        return {
+          ok: false,
+          error: 'unauthorized',
+        };
+      }
+
+      await this.dishs.save(
+        this.dishs.create({ ...createDishInput, restaurant }),
+      );
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not create a dish',
+      };
+    }
   }
 }

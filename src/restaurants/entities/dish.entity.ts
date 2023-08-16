@@ -13,8 +13,8 @@ export class DishOption {
   @Field(() => [String], { nullable: true })
   choices?: string[];
 
-  @Field(() => Int)
-  extra: number;
+  @Field(() => Int, { nullable: true })
+  extra?: number;
 }
 
 @Entity()
@@ -24,7 +24,7 @@ export class Dish extends CoreEntity {
   @Field(() => String)
   @Column()
   @IsString()
-  @Length(5)
+  @Length(0, 15)
   name: string;
 
   @Field(() => Int)
@@ -46,6 +46,7 @@ export class Dish extends CoreEntity {
   @Field((type) => Restaurant)
   @ManyToOne((type) => Restaurant, (restaurant) => restaurant.menu, {
     onDelete: 'CASCADE',
+    nullable: false,
   })
   restaurant: Restaurant;
 

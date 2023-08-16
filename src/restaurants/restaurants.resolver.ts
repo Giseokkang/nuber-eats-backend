@@ -123,7 +123,7 @@ export class CategoryResolver {
 @Resolver((of) => Dish)
 export class DishResolver {
   constructor(private readonly restaurantService: RestaurantService) {}
-  @Mutation((type) => Dish)
+  @Mutation((type) => CreateDishOutput)
   @Role(['Owner'])
   createDish(
     @AuthUser() user: User,
