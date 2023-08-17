@@ -11,7 +11,7 @@ import { Dish } from 'src/restaurants/entities/dish.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
-import { OrderItem } from '../dtos/order-item';
+import { OrderItem } from './order-item';
 
 export enum OrderStatus {
   Pending = 'Pending',

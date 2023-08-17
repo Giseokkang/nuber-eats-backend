@@ -69,7 +69,7 @@ export class Dish extends CoreEntity {
   options?: DishOption;
 
   @Field((type) => [Order])
-  @ManyToMany((type) => Order, (order) => order.dishes, {
+  @ManyToMany((type) => Order, (order) => order.items, {
     nullable: true,
     onDelete: 'SET NULL',
   })
