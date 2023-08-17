@@ -32,27 +32,41 @@ export class OrdersService {
           error: 'Restaurant not found',
         };
       }
-      console.log(items);
-      items.forEach(async (item) => {
+
+      for (const item of items) {
         const dish = await this.dishs.findOne({
           where: {
             id: item.dishId,
           },
         });
         if (!dish) {
-          //* abort error
+          return {
+            ok: false,
+            error: 'Dish not found.',
+          };
         }
-        await this.orderItems.save(
-          this.orderItems.create({
-            dish,
-            options: item.options,
-          }),
-        );
-      });
-      // const order = await this.orders.save(
-      //   this.orders.create({ customer: user, items, restaurant }),
-      // );
-      // console.log('order', order);
+        console.log(`Dish price: ${dish.price}`);
+        for (const itemOption of item.options) {
+          const dishOption = dish.options.find(
+            (dishOption) => dishOption.name === dish.name,
+          );
+          if (dishOption) {
+            if (dishOption.extra) {
+              console.log(` + ${dishOption.extra}`);
+            } else {
+              const dishOptionChoice = dishOption.choices.find(
+                (optionChoice) => optionChoice.name === itemOption.choice,
+              );
+              if (dishOptionChoice) {
+                if (dishOptionChoice.extra) {
+                  console.log(` + ${dishOptionChoice.extra}`);
+                }
+              }
+            }
+          }
+        }
+      }
+
       return {
         ok: true,
       };
