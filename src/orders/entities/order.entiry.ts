@@ -33,19 +33,19 @@ export class Order extends CoreEntity {
   })
   customer?: User;
 
-  @Field((type) => String)
+  @Field((type) => String, { nullable: true })
   @ManyToOne((type) => User, (user) => user.rides, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   driver?: User;
 
-  @Field((type) => String)
+  @Field((type) => String, { nullable: true })
   @ManyToOne((type) => Restaurant, (restaurant) => restaurant.orders, {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  restaurant: Restaurant;
+  restaurant?: Restaurant;
 
   @Field((type) => String)
   @ManyToMany((type) => Dish, (dish) => dish.orders, {
@@ -59,7 +59,7 @@ export class Order extends CoreEntity {
   @IsNumber()
   total?: number;
 
-  @Column({ type: 'enum', enum: OrderStatus })
+  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.Pending })
   @Field((type) => OrderStatus)
   @IsEnum(OrderStatus)
   status: OrderStatus;
