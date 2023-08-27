@@ -49,6 +49,7 @@ import { OrderItem } from './orders/entities/order-item';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      installSubscriptionHandlers: true,
       context: ({ req }) => ({ user: req['user'] }),
     }),
     TypeOrmModule.forRoot({
