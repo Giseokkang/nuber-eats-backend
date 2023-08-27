@@ -50,7 +50,15 @@ import { OrderItem } from './orders/entities/order-item';
       driver: ApolloDriver,
       autoSchemaFile: true,
       installSubscriptionHandlers: true,
-      context: ({ req }) => ({ user: req['user'] }),
+      context: (hi) => {
+        console.log('hi', hi);
+        if (hi.req) {
+          return { user: hi.req['user'] };
+        }
+        if (hi.connection) {
+          console.log('connection', hi.connection);
+        }
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
