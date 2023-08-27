@@ -10,7 +10,7 @@ import { CoreEntity } from 'src/common/eitities/core.entity';
 import { Dish } from 'src/restaurants/entities/dish.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, RelationId } from 'typeorm';
 import { OrderItem } from './order-item';
 
 export enum OrderStatus {
@@ -33,12 +33,18 @@ export class Order extends CoreEntity {
   })
   customer?: User;
 
+  @RelationId((order: Order) => order.customer)
+  customerId: number;
+
   @Field((type) => String, { nullable: true })
   @ManyToOne((type) => User, (user) => user.rides, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   driver?: User;
+
+  @RelationId((order: Order) => order.driver)
+  driverId: number;
 
   @Field((type) => String, { nullable: true })
   @ManyToOne((type) => Restaurant, (restaurant) => restaurant.orders, {
