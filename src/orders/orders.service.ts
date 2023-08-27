@@ -17,9 +17,9 @@ export class OrdersService {
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
     @InjectRepository(Dish)
-    private readonly dishs: Repository<Dish>,
+    private readonly dishes: Repository<Dish>,
   ) {}
-  async createOrder(user: User, { restaurantId, items }: CreateOrderInput) {
+  async createOrder(customer: User, { restaurantId, items }: CreateOrderInput) {
     try {
       const restaurant = await this.restaurants.findOne({
         where: {
@@ -33,8 +33,10 @@ export class OrdersService {
         };
       }
 
+      let orderFinalPrice = 0;
+      const orderItems: OrderItem[] = [];
       for (const item of items) {
-        const dish = await this.dishs.findOne({
+        const dish = await this.dishes.findOne({
           where: {
             id: item.dishId,
           },
@@ -45,27 +47,44 @@ export class OrdersService {
             error: 'Dish not found.',
           };
         }
-        console.log(`Dish price: ${dish.price}`);
+        let dishFinalPrice = dish.price;
         for (const itemOption of item.options) {
           const dishOption = dish.options.find(
-            (dishOption) => dishOption.name === dish.name,
+            (dishOption) => dishOption.name === itemOption.name,
           );
           if (dishOption) {
             if (dishOption.extra) {
-              console.log(` + ${dishOption.extra}`);
+              dishFinalPrice = dishFinalPrice + dishOption.extra;
             } else {
               const dishOptionChoice = dishOption.choices.find(
                 (optionChoice) => optionChoice.name === itemOption.choice,
               );
               if (dishOptionChoice) {
                 if (dishOptionChoice.extra) {
-                  console.log(` + ${dishOptionChoice.extra}`);
+                  dishFinalPrice = dishFinalPrice + dishOptionChoice.extra;
                 }
               }
             }
           }
         }
+        orderFinalPrice = orderFinalPrice + dishFinalPrice;
+        const orderItem = await this.orderItems.save(
+          this.orderItems.create({
+            dish,
+            options: item.options,
+          }),
+        );
+        orderItems.push(orderItem);
       }
+
+      await this.orders.save(
+        this.orders.create({
+          customer,
+          restaurant,
+          total: orderFinalPrice,
+          items: orderItems,
+        }),
+      );
 
       return {
         ok: true,
