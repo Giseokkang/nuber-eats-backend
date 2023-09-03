@@ -23,6 +23,7 @@ import { Dish } from './restaurants/entities/dish.entity';
 import { Order } from './orders/entities/order.entiry';
 import { OrdersModule } from './orders/orders.module';
 import { OrderItem } from './orders/entities/order-item';
+import { Context } from 'graphql-ws';
 
 @Module({
   imports: [
@@ -46,18 +47,21 @@ import { OrderItem } from './orders/entities/order-item';
         MAINGUN_FROM_EMAIL: Joi.string().required(),
       }),
     }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: true,
-      installSubscriptionHandlers: true,
-      context: (hi) => {
-        console.log('hi', hi);
-        if (hi.req) {
-          return { user: hi.req['user'] };
-        }
-        if (hi.connection) {
-          console.log('connection', hi.connection);
-        }
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          onConnect: (connectionParams) => {
+            console.log('connectionParams', connectionParams);
+            return connectionParams;
+          },
+        },
+      },
+      context: ({ req, extra }) => {
+        console.log('req', req);
+        console.log('extra', extra);
+        return { token: req ? req.headers['x-jwt'] : extra.token };
       },
     }),
     TypeOrmModule.forRoot({

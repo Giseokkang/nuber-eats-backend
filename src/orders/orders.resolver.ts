@@ -10,7 +10,7 @@ import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
 import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
 import { PubSub } from 'graphql-subscriptions';
 
-const pubsub = new PubSub();
+const pubSub = new PubSub();
 
 @Resolver((of) => Order)
 export class OrdersResolver {
@@ -53,15 +53,15 @@ export class OrdersResolver {
   }
 
   @Mutation((returns) => Boolean)
-  potatoReady() {
-    pubsub.publish('hotPotatos', {
-      readyPotato: 'YOur potato is ready. love you.',
-    });
+  async addComment() {
+    pubSub.publish('commentAdded', { commentAdded: 'Hello subscription' });
     return true;
   }
 
-  @Subscription((returns) => String)
-  readyPotato() {
-    return pubsub.asyncIterator('hotPotatos');
+  @Subscription((returns) => String, {
+    name: 'commentAdded',
+  })
+  subscribeToCommentAdded() {
+    return pubSub.asyncIterator('commentAdded');
   }
 }
