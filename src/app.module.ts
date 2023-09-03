@@ -53,15 +53,13 @@ import { Context } from 'graphql-ws';
       subscriptions: {
         'subscriptions-transport-ws': {
           onConnect: (connectionParams) => {
-            console.log('connectionParams', connectionParams);
-            return connectionParams;
+            const TOKEN_KEY = 'x-jwt';
+            return { token: connectionParams[TOKEN_KEY] };
           },
         },
       },
-      context: ({ req, extra }) => {
-        console.log('req', req);
-        console.log('extra', extra);
-        return { token: req ? req.headers['x-jwt'] : extra.token };
+      context: ({ req, connection }) => {
+        return { token: req ? req.headers['x-jwt'] : connection.token };
       },
     }),
     TypeOrmModule.forRoot({

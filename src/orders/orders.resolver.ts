@@ -61,7 +61,9 @@ export class OrdersResolver {
   @Subscription((returns) => String, {
     name: 'commentAdded',
   })
-  subscribeToCommentAdded() {
+  @Role(['Any'])
+  subscribeToCommentAdded(@AuthUser() user: User) {
+    console.log('user', user);
     return pubSub.asyncIterator('commentAdded');
   }
 }
