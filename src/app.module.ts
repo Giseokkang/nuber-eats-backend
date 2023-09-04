@@ -24,6 +24,7 @@ import { Order } from './orders/entities/order.entiry';
 import { OrdersModule } from './orders/orders.module';
 import { OrderItem } from './orders/entities/order-item';
 import { Context } from 'graphql-ws';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -87,13 +88,13 @@ import { Context } from 'graphql-ws';
     AuthModule,
     UsersModule,
     RestaurantsModule,
-    AuthModule,
     MailModule.forRoot({
       apiKey: process.env.MAINGUN_API_KEY,
       domain: process.env.MAINGUN_DOMAIN_NAME,
       fromEmail: process.env.MAINGUN_FROM_EMAIL,
     }),
     OrdersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
