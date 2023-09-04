@@ -55,17 +55,20 @@ export class OrdersResolver {
   }
 
   @Mutation((returns) => Boolean)
-  async addComment() {
-    this.pubSub.publish('commentAdded', { commentAdded: 'Hello subscription' });
+  async potatoReady(@Args('potatoId') potatoId: number) {
+    await this.pubSub.publish('hotPotatos', {
+      readyPotato: potatoId,
+    });
     return true;
   }
 
   @Subscription((returns) => String, {
-    name: 'commentAdded',
+    filter: ({ readyPotato }, { potatoId }) => {
+      return readyPotato === potatoId;
+    },
   })
   @Role(['Any'])
-  subscribeToCommentAdded(@AuthUser() user: User) {
-    console.log('user', user);
-    return this.pubSub.asyncIterator('commentAdded');
+  readyPotato(@Args('potatoId') potatoId: number) {
+    return this.pubSub.asyncIterator('hotPotatos');
   }
 }
