@@ -1,16 +1,22 @@
 import {
   Field,
+  Float,
   InputType,
-  Int,
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
 import { IsEnum, IsNumber } from 'class-validator';
 import { CoreEntity } from 'src/common/eitities/core.entity';
-import { Dish } from 'src/restaurants/entities/dish.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToMany, ManyToOne, RelationId } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  RelationId,
+} from 'typeorm';
 import { OrderItem } from './order-item';
 
 export enum OrderStatus {
@@ -37,7 +43,7 @@ export class Order extends CoreEntity {
   @RelationId((order: Order) => order.customer)
   customerId: number;
 
-  @Field((type) => String, { nullable: true })
+  @Field((type) => User, { nullable: true })
   @ManyToOne((type) => User, (user) => user.rides, {
     onDelete: 'SET NULL',
     nullable: true,
@@ -47,22 +53,20 @@ export class Order extends CoreEntity {
   @RelationId((order: Order) => order.driver)
   driverId: number;
 
-  @Field((type) => String, { nullable: true })
+  @Field((type) => Restaurant, { nullable: true })
   @ManyToOne((type) => Restaurant, (restaurant) => restaurant.orders, {
-    nullable: true,
     onDelete: 'SET NULL',
+    nullable: true,
   })
   restaurant?: Restaurant;
 
-  @Field((type) => String)
-  @ManyToMany((type) => Dish, (dish) => dish.orders, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @Field((type) => [OrderItem])
+  @ManyToMany((type) => OrderItem)
+  @JoinTable()
   items: OrderItem[];
 
   @Column({ nullable: true })
-  @Field((type) => Int, { nullable: true })
+  @Field((type) => Float, { nullable: true })
   @IsNumber()
   total?: number;
 
