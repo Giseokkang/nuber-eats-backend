@@ -25,6 +25,8 @@ import { OrdersModule } from './orders/orders.module';
 import { OrderItem } from './orders/entities/order-item';
 import { Context } from 'graphql-ws';
 import { CommonModule } from './common/common.module';
+import { PaymentsModule } from './payments/payments.module';
+import { Payment } from './payments/entities/payment.entity';
 
 @Module({
   imports: [
@@ -82,6 +84,7 @@ import { CommonModule } from './common/common.module';
         Dish,
         Order,
         OrderItem,
+        Payment,
       ],
     }),
     JwtModule.forRoot({ privateKey: process.env.PRIVATE_KEY }),
@@ -95,6 +98,7 @@ import { CommonModule } from './common/common.module';
     }),
     OrdersModule,
     CommonModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [],
