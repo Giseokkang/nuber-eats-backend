@@ -1,4 +1,4 @@
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ApolloDriver } from '@nestjs/apollo';
 import * as Joi from 'joi';
 import {
   MiddlewareConsumer,
@@ -23,7 +23,6 @@ import { Dish } from './restaurants/entities/dish.entity';
 import { Order } from './orders/entities/order.entiry';
 import { OrdersModule } from './orders/orders.module';
 import { OrderItem } from './orders/entities/order-item';
-import { Context } from 'graphql-ws';
 import { CommonModule } from './common/common.module';
 import { PaymentsModule } from './payments/payments.module';
 import { Payment } from './payments/entities/payment.entity';
@@ -101,7 +100,6 @@ import { Payment } from './payments/entities/payment.entity';
     PaymentsModule,
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
